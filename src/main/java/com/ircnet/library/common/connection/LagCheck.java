@@ -1,7 +1,7 @@
 package com.ircnet.library.common.connection;
 
+import com.ircnet.library.common.IRCTask;
 import com.ircnet.library.common.SettingConstants;
-import com.ircnet.library.common.SettingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,15 +10,12 @@ import java.util.Date;
 public class LagCheck {
     private static final Logger LOGGER = LoggerFactory.getLogger(LagCheck.class);
 
-    private SettingService settingService;
-
     private boolean inProgress;
     private int lag;
     private Date sent;
     private Date next;
 
     public LagCheck() {
-        this.settingService = settingService;
     }
 
     public boolean shouldPerformLagCheck(IRCConnection ircConnection) {
@@ -40,7 +37,7 @@ public class LagCheck {
             this.inProgress = false;
         }
 
-        this.next = new Date(System.currentTimeMillis() + settingService.findInteger(SettingConstants.LAGCHECK_INTERVAL, SettingConstants.LAGCHECK_INTERVAL_DEFAULT) * 1000);
+        this.next = new Date(System.currentTimeMillis() + IRCTask.getSettingService().findInteger(SettingConstants.LAGCHECK_INTERVAL, SettingConstants.LAGCHECK_INTERVAL_DEFAULT) * 1000);
     }
 
     public int getLag() {
