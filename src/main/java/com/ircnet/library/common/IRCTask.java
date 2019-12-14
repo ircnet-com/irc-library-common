@@ -263,4 +263,8 @@ public abstract class IRCTask<S extends IRCConnection, T extends Client> {
     public static SettingService getSettingService() {
         return settingService;
     }
+
+    public static void setSettingService(SettingService settingService) {
+        IRCTask.settingService = settingService;
+    }
 }
