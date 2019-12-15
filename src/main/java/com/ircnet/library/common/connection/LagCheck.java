@@ -48,6 +48,13 @@ public class LagCheck {
         return lag;
     }
 
+    public void reset() {
+        this.inProgress = false;
+        this.lag = 0;
+        this.sent = null;
+        this.next = null;
+    }
+
     public Date getNext() {
         return next;
     }
