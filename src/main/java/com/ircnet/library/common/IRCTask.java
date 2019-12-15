@@ -117,11 +117,12 @@ public abstract class IRCTask<S extends IRCConnection, T extends Client> {
             return;
         }
 
-        if (settingService.findInteger(SettingConstants.LAGCHECK_INTERVAL, SettingConstants.LAGCHECK_INTERVAL_DEFAULT) > 0) {
+        if (ircConnection.getConnectionStatus() == ConnectionStatus.REGISTERED) {
             int maxLagBeforeDisconnect = settingService.findInteger(SettingConstants.MAX_LAG_BEFORE_DISCONNECT, SettingConstants.MAX_LAG_BEFORE_DISCONNECT_DEFAULT);
 
             if (maxLagBeforeDisconnect != 0 && ircConnection.getLagCheck().getLag() >= maxLagBeforeDisconnect) {
                 LOGGER.info("Disconnecting after lag of {} seconds", maxLagBeforeDisconnect);
+                ircConnection.getLagCheck().reset();
                 ircConnection.disconnect();
                 return;
             }
