@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 
 public abstract class IRCTask<S extends IRCConnection, T extends Client> {
@@ -56,6 +58,8 @@ public abstract class IRCTask<S extends IRCConnection, T extends Client> {
         }
 
         while (true) {
+            Instant iterationBegin = Instant.now();
+
             try {
                 long now = System.currentTimeMillis();
 
@@ -79,6 +83,13 @@ public abstract class IRCTask<S extends IRCConnection, T extends Client> {
             }
             catch (Exception e) {
                 LOGGER.error("An error occurred", e);
+            }
+
+            Instant iterationEnd = Instant.now();
+            long secondsElapsed = Duration.between(iterationBegin, iterationEnd).toMillis() / 1000;
+
+            if(secondsElapsed >= 5) {
+                LOGGER.warn("Iteration took {} seconds", secondsElapsed);
             }
         }
     }
