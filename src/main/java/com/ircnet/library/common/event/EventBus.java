@@ -8,43 +8,33 @@ import java.util.*;
 public class EventBus {
     private static final Logger LOGGER = LoggerFactory.getLogger(EventBus.class);
 
-    private static EventBus instance;
-    private boolean checkInheritance ;
+    private boolean checkInheritance;
 
     private List<AbstractEventListener> eventListeners;
 
-    private EventBus() {
+    public EventBus() {
         this.eventListeners = new ArrayList<>();
     }
 
-    public static EventBus getInstance() {
-        if(instance == null) {
-            instance = new EventBus();
-            instance.checkInheritance = true;
-        }
-
-        return instance;
+    public void registerEventListener(int index, AbstractEventListener eventListener) {
+        eventListeners.add(index, eventListener);
     }
 
-    public static void registerEventListener(int index, AbstractEventListener eventListener) {
-        getInstance().eventListeners.add(index, eventListener);
+    public void registerEventListener(AbstractEventListener eventListener) {
+        eventListeners.add(eventListener);
     }
 
-    public static void registerEventListener(AbstractEventListener eventListener) {
-        getInstance().eventListeners.add(eventListener);
-    }
-
-    public static void registerEventListener(String owner, AbstractEventListener eventListener) {
+    public void registerEventListener(String owner, AbstractEventListener eventListener) {
         eventListener.setOwner(owner);
-        getInstance().eventListeners.add(eventListener);
+        eventListeners.add(eventListener);
     }
 
-    public static void removeEventListener(AbstractEventListener eventListener) {
-        getInstance().eventListeners.remove(eventListener);
+    public void removeEventListener(AbstractEventListener eventListener) {
+        eventListeners.remove(eventListener);
     }
 
-    public static void removeEventListenersOfOwner(String owner) {
-        Iterator<AbstractEventListener> iterator = getInstance().eventListeners.iterator();
+    public void removeEventListenersOfOwner(String owner) {
+        Iterator<AbstractEventListener> iterator = eventListeners.iterator();
 
         while(iterator.hasNext()) {
             AbstractEventListener eventListener = iterator.next();
@@ -55,12 +45,12 @@ public class EventBus {
         }
     }
 
-    public static void setCheckInheritance(boolean checkInheritance) {
-        getInstance().checkInheritance = checkInheritance;
+    public void setCheckInheritance(boolean checkInheritance) {
+        this.checkInheritance = checkInheritance;
     }
 
-    public static void publishEvent(AbstractEvent event) {
-        Iterator<AbstractEventListener> iterator = getInstance().getEventListeners().iterator();
+    public void publishEvent(AbstractEvent event) {
+        Iterator<AbstractEventListener> iterator = getEventListeners().iterator();
         
         while(iterator.hasNext()) {
             AbstractEventListener eventListener;
@@ -72,7 +62,7 @@ public class EventBus {
                 return;
             }
 
-            if(eventListener.getEventClass() == event.getClass() || (instance.checkInheritance && eventListener.getEventClass().getClass().isInstance(event.getClass()))) {
+            if(eventListener.getEventClass() == event.getClass() || (checkInheritance && eventListener.getEventClass().getClass().isInstance(event.getClass()))) {
                 try {
                     eventListener.onEvent(event);
                 }
