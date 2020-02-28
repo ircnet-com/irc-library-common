@@ -2,6 +2,7 @@ package com.ircnet.library.common;
 
 import com.ircnet.library.common.connection.ConnectionStatus;
 import com.ircnet.library.common.connection.IRCConnection;
+import com.ircnet.library.common.event.EventBus;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,12 +19,15 @@ public abstract class IRCTask<S extends IRCConnection, T extends Client> {
 
     private List<T> clientList = new ArrayList<>();
 
+    protected EventBus eventBus;
+
     protected Parser parser;
 
     private static SettingService settingService;
 
     public IRCTask() {
-        settingService = new SettingServiceImpl();
+        this.eventBus = new EventBus();
+        this.settingService = new SettingServiceImpl();
     }
 
     public List<T> getClientList() {
@@ -278,5 +282,9 @@ public abstract class IRCTask<S extends IRCConnection, T extends Client> {
 
     public static void setSettingService(SettingService settingService) {
         IRCTask.settingService = settingService;
+    }
+
+    public EventBus getEventBus() {
+        return eventBus;
     }
 }

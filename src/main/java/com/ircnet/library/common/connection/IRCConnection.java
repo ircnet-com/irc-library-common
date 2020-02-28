@@ -33,12 +33,15 @@ public class IRCConnection {
 
     protected LagCheck lagCheck;
 
+    protected EventBus eventBus;
+
     public IRCConnection(IRCTask ircTask, ConfigurationModel configurationModel) {
         this.ircTask = ircTask;
         this.configurationModel = configurationModel;
         this.connectionStatus = ConnectionStatus.DISCONNECTED;
         this.nexConnectAttempt = new Date();
         this.lagCheck = new LagCheck();
+        this.eventBus = ircTask.getEventBus();
     }
 
     public void connect() throws IOException {
@@ -55,7 +58,7 @@ public class IRCConnection {
         }
         catch (Exception e) {
             LOGGER.error("Failed to resolve {} protocol: {}", server.getHostname(), server.getProtocol());
-            EventBus.publishEvent(new ConnectionStatusChangedEvent(this, oldConnectionStatus, this.connectionStatus));
+            eventBus.publishEvent(new ConnectionStatusChangedEvent(this, oldConnectionStatus, this.connectionStatus));
             return;
         }
 
@@ -73,7 +76,7 @@ public class IRCConnection {
         this.connectTime = new Date();
         this.socketChannel.connect(inetSocketAddress);
 
-        EventBus.publishEvent(new ConnectionStatusChangedEvent(this, oldConnectionStatus, this.connectionStatus));
+        eventBus.publishEvent(new ConnectionStatusChangedEvent(this, oldConnectionStatus, this.connectionStatus));
     }
 
     public void onConnectionEstablished() {
@@ -82,7 +85,7 @@ public class IRCConnection {
 
         if(!isSSL()) {
             // Connection to IRC established
-            EventBus.publishEvent(new ConnectionStatusChangedEvent(this, oldConnectionStatus, this.connectionStatus));
+            eventBus.publishEvent(new ConnectionStatusChangedEvent(this, oldConnectionStatus, this.connectionStatus));
         }
     }
 
@@ -91,7 +94,7 @@ public class IRCConnection {
         this.connectionStatus = ConnectionStatus.DISCONNECTED;
         this.connectTime = null;
 
-        EventBus.publishEvent(new ConnectionStatusChangedEvent(this, oldConnectionStatus, this.connectionStatus));
+        eventBus.publishEvent(new ConnectionStatusChangedEvent(this, oldConnectionStatus, this.connectionStatus));
 
         // TODO: Handle parse ERROR, maybe QUIT
     }
@@ -113,7 +116,7 @@ public class IRCConnection {
     public void onLineReceived(String line) {
         try {
             ircTask.getParser().parse(this, line);
-            EventBus.publishEvent(new ReceivedLineEvent(this, line));
+            eventBus.publishEvent(new ReceivedLineEvent(this, line));
         }
         catch (Exception e) {
             LOGGER.error("Failed to parse '{}'", line, e);
@@ -209,5 +212,9 @@ public class IRCConnection {
 
     public boolean isSSL() {
         return false;
+    }
+
+    public EventBus getEventBus() {
+        return eventBus;
     }
 }
