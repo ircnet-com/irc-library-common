@@ -1,5 +1,6 @@
 package com.ircnet.library.common;
 
+import com.ircnet.library.common.configuration.ConfigurationModel;
 import com.ircnet.library.common.connection.ConnectionStatus;
 import com.ircnet.library.common.connection.IRCConnection;
 import com.ircnet.library.common.event.EventBus;
@@ -14,37 +15,25 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 
-public abstract class IRCTask<S extends IRCConnection, T extends Client> {
+public abstract class IRCTask<S extends IRCConnection> {
     private static final Logger LOGGER = LoggerFactory.getLogger(IRCTask.class);
 
-    private List<T> clientList = new ArrayList<>();
+    protected ConfigurationModel configuration;
+
+    protected S ircConnection;
 
     protected EventBus eventBus;
 
     protected Parser parser;
 
+    private boolean aborted;
+
     private static SettingService settingService;
 
     public IRCTask() {
+        aborted = false;
         this.eventBus = new EventBus();
         this.settingService = new SettingServiceImpl();
-    }
-
-    public List<T> getClientList() {
-        return clientList;
-    }
-
-    public void add(T client) {
-        clientList.add(client);
-    }
-
-    public void removeByUserId(String userId) {
-        for(T client : getClientList()) {
-            if(client.getConfiguration().getUserId().equals(userId)) {
-                getClientList().remove(client);
-                return;
-            }
-        }
     }
 
     public void run()  {
@@ -61,7 +50,7 @@ public abstract class IRCTask<S extends IRCConnection, T extends Client> {
             return;
         }
 
-        while (true) {
+        while (!aborted) {
             Instant iterationBegin = Instant.now();
 
             try {
@@ -77,13 +66,7 @@ public abstract class IRCTask<S extends IRCConnection, T extends Client> {
                     afterOneSecond();
                 }
 
-                Iterator<T> clientIterator = getClientList().iterator();
-
-                while (clientIterator.hasNext()) {
-                    T client = clientIterator.next();
-
-                    processClientIteration(client, selector);
-                }
+                processClientIteration(selector);
             }
             catch (Exception e) {
                 LOGGER.error("An error occurred", e);
@@ -96,15 +79,15 @@ public abstract class IRCTask<S extends IRCConnection, T extends Client> {
                 LOGGER.warn("Iteration took {} seconds", secondsElapsed);
             }
         }
+
+        LOGGER.info("Terminating thread for " + configuration.getUserId());
     }
 
-    protected void processClientIteration(T client, Selector selector) throws IOException {
-        S ircConnection = (S) client.getIRCConnection();
-
+    protected void processClientIteration(Selector selector) throws IOException {
         long now = System.currentTimeMillis();
 
         // Connect
-        if (client.getConfiguration().isAutoConnectEnabled() && ircConnection.getConnectionStatus() == ConnectionStatus.DISCONNECTED) {
+        if (configuration.isAutoConnectEnabled() && ircConnection.getConnectionStatus() == ConnectionStatus.DISCONNECTED) {
             if (new Date().getTime() >= ircConnection.getNexConnectAttempt().getTime()) {
                 ircConnection.connect();
 
@@ -149,14 +132,6 @@ public abstract class IRCTask<S extends IRCConnection, T extends Client> {
 
     protected abstract void registerEventListeners();
 
-    private S findIRCConnectionForSocketChannel(SocketChannel socketChannel) {
-        for (T client : getClientList())
-            if (client.getIRCConnection().getSocketChannel() == socketChannel)
-                return (S) client.getIRCConnection();
-
-        return null;
-    }
-
     protected void processReadySet(Set readySet) {
         Iterator iterator = readySet.iterator();
 
@@ -164,8 +139,6 @@ public abstract class IRCTask<S extends IRCConnection, T extends Client> {
             SelectionKey key = (SelectionKey) iterator.next();
 
             SocketChannel sc = (SocketChannel) key.channel();
-            S ircConnection = findIRCConnectionForSocketChannel(sc);
-
             if (ircConnection == null) {
                 LOGGER.debug("Failed to find irc connection for socket channel {}", sc);
                 key.cancel();
@@ -230,7 +203,7 @@ public abstract class IRCTask<S extends IRCConnection, T extends Client> {
                         continue;
                     }
 
-                    processInput(ircConnection, bb);
+                    processInput(bb);
                 }
             } catch (CancelledKeyException exception) {
                 // Ignore
@@ -241,7 +214,7 @@ public abstract class IRCTask<S extends IRCConnection, T extends Client> {
         }
     }
 
-    protected void processInput(S ircConnection, ByteBuffer bb) {
+    protected void processInput(ByteBuffer bb) {
         String input = new String(bb.array());
         input = input.replace("\u0000", "");
 
@@ -286,5 +259,21 @@ public abstract class IRCTask<S extends IRCConnection, T extends Client> {
 
     public EventBus getEventBus() {
         return eventBus;
+    }
+
+    public ConfigurationModel getConfiguration() {
+        return configuration;
+    }
+
+    public S getIRCConnection() {
+        return ircConnection;
+    }
+
+    public boolean isAborted() {
+        return aborted;
+    }
+
+    public void setAborted(boolean aborted) {
+        this.aborted = aborted;
     }
 }
