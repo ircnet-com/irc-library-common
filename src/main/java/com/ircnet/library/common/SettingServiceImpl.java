@@ -3,8 +3,8 @@ package com.ircnet.library.common;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SettingServiceImpl implements SettingService{
-    private Map<String, Object> settings;
+public class SettingServiceImpl implements SettingService {
+    protected Map<String, Object> settings;
 
     public SettingServiceImpl() {
         this.settings = new HashMap<>();
