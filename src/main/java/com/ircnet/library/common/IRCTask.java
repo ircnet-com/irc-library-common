@@ -15,12 +15,12 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 
-public abstract class IRCTask<S extends IRCConnection> {
+public abstract class IRCTask<S extends IRCConnection, T extends ConfigurationModel> {
     private static final Logger LOGGER = LoggerFactory.getLogger(IRCTask.class);
 
-    protected ConfigurationModel configuration;
-
     protected S ircConnection;
+
+    protected T configuration;
 
     protected EventBus eventBus;
 
@@ -261,7 +261,7 @@ public abstract class IRCTask<S extends IRCConnection> {
         return eventBus;
     }
 
-    public ConfigurationModel getConfiguration() {
+    public T getConfiguration() {
         return configuration;
     }
 

@@ -19,10 +19,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class IRCConnection {
+public class IRCConnection<S extends IRCTask> {
     private static final Logger LOGGER = LoggerFactory.getLogger(IRCConnection.class);
 
-    protected IRCTask ircTask;
+    protected S ircTask;
     protected ConfigurationModel configurationModel;
     protected SocketChannel socketChannel;
     protected String incompleteLine;
@@ -35,7 +35,7 @@ public class IRCConnection {
 
     protected EventBus eventBus;
 
-    public IRCConnection(IRCTask ircTask, ConfigurationModel configurationModel) {
+    public IRCConnection(S ircTask, ConfigurationModel configurationModel) {
         this.ircTask = ircTask;
         this.configurationModel = configurationModel;
         this.connectionStatus = ConnectionStatus.DISCONNECTED;
