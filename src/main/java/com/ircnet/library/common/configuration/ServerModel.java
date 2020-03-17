@@ -2,13 +2,14 @@ package com.ircnet.library.common.configuration;
 
 public abstract class ServerModel {
     public enum Protocol {
-        IPV4, IPV6,
-        ipv4,ipv6 // FIXME legacy
+        IPV4,
+        IPV6
     }
 
     protected String hostname;
     protected int port;
     protected Protocol protocol;
+    protected String password;
     protected boolean ssl;
 
     public ServerModel() {
@@ -38,6 +39,14 @@ public abstract class ServerModel {
 
     public Protocol getProtocol() {
         return protocol;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public void setProtocol(Protocol protocol) {
