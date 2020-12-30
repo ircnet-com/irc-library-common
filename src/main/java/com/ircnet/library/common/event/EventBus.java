@@ -62,7 +62,7 @@ public class EventBus {
                 return;
             }
 
-            if(eventListener.getEventClass() == event.getClass() || (checkInheritance && eventListener.getEventClass().getClass().isInstance(event.getClass()))) {
+            if(eventListener.getEventClass() == event.getClass() || (checkInheritance && eventListener.getEventClass().isInstance(event.getClass()))) {
                 try {
                     eventListener.onEvent(event);
                 }
