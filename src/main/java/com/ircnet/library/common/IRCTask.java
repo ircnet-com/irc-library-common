@@ -87,7 +87,7 @@ public abstract class IRCTask<S extends IRCConnection, T extends ConfigurationMo
         long now = System.currentTimeMillis();
 
         // Connect
-        if (configuration.isAutoConnectEnabled() && ircConnection.getConnectionStatus() == ConnectionStatus.DISCONNECTED) {
+        if (!aborted && configuration.isAutoConnectEnabled() && ircConnection.getConnectionStatus() == ConnectionStatus.DISCONNECTED) {
             if (new Date().getTime() >= ircConnection.getNexConnectAttempt().getTime()) {
                 ircConnection.connect();
 
