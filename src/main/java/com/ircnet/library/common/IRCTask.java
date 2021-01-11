@@ -23,11 +23,10 @@ public abstract class IRCTask<S extends IRCConnection, T extends Client> {
 
     protected Parser parser;
 
-    private static SettingService settingService;
+    private static SettingService settingService = new SettingServiceImpl();
 
     public IRCTask() {
         this.eventBus = new EventBus();
-        this.settingService = new SettingServiceImpl();
     }
 
     public List<T> getClientList() {
