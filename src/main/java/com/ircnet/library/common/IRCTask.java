@@ -28,13 +28,12 @@ public abstract class IRCTask<S extends IRCConnection, T extends ConfigurationMo
 
     private boolean aborted;
 
-    private static SettingService settingService;
+    private static SettingService settingService = new SettingServiceImpl();
     private long lastProcessClientIteration;
 
     public IRCTask() {
-        aborted = false;
+        this.aborted = false;
         this.eventBus = new EventBus();
-        this.settingService = new SettingServiceImpl();
     }
 
     public void run()  {
