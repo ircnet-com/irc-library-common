@@ -28,12 +28,12 @@ public abstract class IRCTask<S extends IRCConnection, T extends ConfigurationMo
 
     private boolean aborted;
 
-    private static SettingService settingService;
+    private static SettingService settingService = new SettingServiceImpl();
+    private long lastProcessClientIteration;
 
     public IRCTask() {
-        aborted = false;
+        this.aborted = false;
         this.eventBus = new EventBus();
-        this.settingService = new SettingServiceImpl();
     }
 
     public void run()  {
@@ -85,6 +85,7 @@ public abstract class IRCTask<S extends IRCConnection, T extends ConfigurationMo
 
     protected void processClientIteration(Selector selector) throws IOException {
         long now = System.currentTimeMillis();
+        this.lastProcessClientIteration = now;
 
         // Connect
         if (!aborted && configuration.isAutoConnectEnabled() && ircConnection.getConnectionStatus() == ConnectionStatus.DISCONNECTED) {
@@ -275,5 +276,9 @@ public abstract class IRCTask<S extends IRCConnection, T extends ConfigurationMo
 
     public void setAborted(boolean aborted) {
         this.aborted = aborted;
+    }
+
+    public long getLastProcessClientIteration() {
+        return lastProcessClientIteration;
     }
 }
