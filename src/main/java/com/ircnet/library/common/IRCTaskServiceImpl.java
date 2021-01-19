@@ -30,8 +30,6 @@ public abstract class IRCTaskServiceImpl implements IRCTaskService {
     private SettingService settingService;
 
     public void run(IRCTask ircTask)  {
-        registerEventListeners();
-
         long lastTimeMillis = System.currentTimeMillis();
 
         Selector selector;
@@ -124,8 +122,6 @@ public abstract class IRCTaskServiceImpl implements IRCTaskService {
 
     protected void afterOneSecond(IRCTask ircTask) {
     }
-
-    protected abstract void registerEventListeners();
 
     protected void processReadySet(IRCTask ircTask, Set readySet) {
         IRCConnection ircConnection = ircTask.getIRCConnection();
