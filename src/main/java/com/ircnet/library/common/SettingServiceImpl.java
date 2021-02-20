@@ -1,8 +1,11 @@
 package com.ircnet.library.common;
 
+import org.springframework.stereotype.Service;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@Service
 public class SettingServiceImpl implements SettingService {
     protected Map<String, Object> settings;
 
