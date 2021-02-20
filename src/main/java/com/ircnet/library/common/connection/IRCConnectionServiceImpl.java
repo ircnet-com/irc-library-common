@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.Formatter;
 import java.util.Random;
 
-public class IRCConnectionServiceImpl implements IRCConnectionService {
+public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
     private static final Logger LOGGER = LoggerFactory.getLogger(IRCConnectionServiceImpl.class);
 
     @Autowired
@@ -35,6 +35,9 @@ public class IRCConnectionServiceImpl implements IRCConnectionService {
 
     @Autowired
     private SettingService settingService;
+
+    @Autowired
+    private ResolveService resolveService;
 
     @Override
     public void connect(IRCConnection connection) throws IOException {
@@ -48,7 +51,7 @@ public class IRCConnectionServiceImpl implements IRCConnectionService {
         InetAddress inetAddress;
 
         try {
-            inetAddress = Resolver.resolve(server);
+            inetAddress = resolveService.resolve(server);
         }
         catch (Exception e) {
             LOGGER.error("Failed to resolve {} protocol: {}", server.getHostname(), server.getProtocol());
