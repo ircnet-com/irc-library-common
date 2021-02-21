@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 @Service
-public abstract class IRCTaskServiceImpl implements IRCTaskService {
+public class IRCTaskServiceImpl implements IRCTaskService {
     private static final Logger LOGGER = LoggerFactory.getLogger(IRCTask.class);
 
     @Autowired
