@@ -120,9 +120,18 @@ public class IRCTaskServiceImpl implements IRCTaskService {
                 return;
             }
         }
+
+        sendQueuedMessages(ircConnection);
+
+        if (ircConnectionService.shouldPerformLagCheck(ircConnection)) {
+            ircConnectionService.checkLag(ircConnection);
+        }
     }
 
     protected void afterOneSecond(IRCTask ircTask) {
+    }
+
+    protected void sendQueuedMessages(IRCConnection connection) {
     }
 
     protected void processReadySet(IRCTask ircTask, Set readySet) {

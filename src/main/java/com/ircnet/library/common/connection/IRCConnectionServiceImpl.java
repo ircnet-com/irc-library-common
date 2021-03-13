@@ -1,6 +1,5 @@
 package com.ircnet.library.common.connection;
 
-import com.ircnet.library.common.Parser;
 import com.ircnet.library.common.SettingConstants;
 import com.ircnet.library.common.SettingService;
 import com.ircnet.library.common.configuration.ConfigurationModel;
@@ -9,6 +8,7 @@ import com.ircnet.library.common.configuration.ServerModel;
 import com.ircnet.library.common.event.ConnectionStatusChangedEvent;
 import com.ircnet.library.common.event.EventBus;
 import com.ircnet.library.common.event.ReceivedLineEvent;
+import com.ircnet.library.parser.Parser;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -195,7 +195,7 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
 
     @Override
     public boolean shouldPerformLagCheck(IRCConnection connection) {
-        return !connection.isLagCheckInProgress() && connection.getPenalty() == 0 && connection.getLagCheckNext() != null && System.currentTimeMillis() >= connection.getLagCheckNext().getTime();
+        return connection.getConnectionStatus() == ConnectionStatus.REGISTERED && !connection.isLagCheckInProgress() && connection.getPenalty() == 0 && connection.getLagCheckNext() != null && System.currentTimeMillis() >= connection.getLagCheckNext().getTime();
     }
 
     @Override

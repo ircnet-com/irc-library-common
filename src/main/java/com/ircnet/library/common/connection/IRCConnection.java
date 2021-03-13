@@ -1,6 +1,5 @@
 package com.ircnet.library.common.connection;
 
-import com.ircnet.library.common.IRCTask;
 import com.ircnet.library.common.configuration.ConfigurationModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,10 +7,9 @@ import org.slf4j.LoggerFactory;
 import java.nio.channels.SocketChannel;
 import java.util.Date;
 
-public class IRCConnection<S extends IRCTask> {
+public class IRCConnection {
     private static final Logger LOGGER = LoggerFactory.getLogger(IRCConnection.class);
 
-    protected S ircTask;
     protected ConfigurationModel configurationModel;
     protected SocketChannel socketChannel;
     protected String incompleteLine;
@@ -25,8 +23,7 @@ public class IRCConnection<S extends IRCTask> {
     private Date lagCheckSent;
     private Date lagCheckNext;
 
-    public IRCConnection(S ircTask, ConfigurationModel configurationModel) {
-        this.ircTask = ircTask;
+    public IRCConnection(ConfigurationModel configurationModel) {
         this.configurationModel = configurationModel;
         this.connectionStatus = ConnectionStatus.DISCONNECTED;
         this.nexConnectAttempt = new Date();
@@ -34,14 +31,6 @@ public class IRCConnection<S extends IRCTask> {
 
     public static Logger getLOGGER() {
         return LOGGER;
-    }
-
-    public S getIrcTask() {
-        return ircTask;
-    }
-
-    public void setIrcTask(S ircTask) {
-        this.ircTask = ircTask;
     }
 
     public ConfigurationModel getConfigurationModel() {
