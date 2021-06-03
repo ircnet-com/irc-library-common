@@ -3,6 +3,9 @@ package com.ircnet.library.common;
 import com.ircnet.library.common.configuration.ConfigurationModel;
 import com.ircnet.library.common.connection.IRCConnection;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public abstract class IRCTask<S extends IRCConnection, T extends ConfigurationModel> {
     protected S ircConnection;
 
@@ -12,8 +15,11 @@ public abstract class IRCTask<S extends IRCConnection, T extends ConfigurationMo
 
     private long lastProcessClientIteration;
 
+    private Map<String, Object> dynamicProperties;
+
     public IRCTask() {
         this.aborted = false;
+        this.dynamicProperties = new HashMap<>();
     }
 
     public T getConfiguration() {
@@ -38,5 +44,13 @@ public abstract class IRCTask<S extends IRCConnection, T extends ConfigurationMo
 
     public void setLastProcessClientIteration(long lastProcessClientIteration) {
         this.lastProcessClientIteration = lastProcessClientIteration;
+    }
+
+    public Map<String, Object> getDynamicProperties() {
+        return dynamicProperties;
+    }
+
+    public void setDynamicProperties(Map<String, Object> dynamicProperties) {
+        this.dynamicProperties = dynamicProperties;
     }
 }

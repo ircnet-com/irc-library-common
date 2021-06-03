@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.channels.SocketChannel;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class IRCConnection {
     private static final Logger LOGGER = LoggerFactory.getLogger(IRCConnection.class);
@@ -23,10 +25,13 @@ public class IRCConnection {
     private Date lagCheckSent;
     private Date lagCheckNext;
 
+    private Map<String, Object> dynamicProperties;
+
     public IRCConnection(ConfigurationModel configurationModel) {
         this.configurationModel = configurationModel;
         this.connectionStatus = ConnectionStatus.DISCONNECTED;
         this.nexConnectAttempt = new Date();
+        this.dynamicProperties = new HashMap<>();
     }
 
     public static Logger getLOGGER() {
@@ -119,5 +124,13 @@ public class IRCConnection {
 
     public void setLagCheckNext(Date lagCheckNext) {
         this.lagCheckNext = lagCheckNext;
+    }
+
+    public Map<String, Object> getDynamicProperties() {
+        return dynamicProperties;
+    }
+
+    public void setDynamicProperties(Map<String, Object> dynamicProperties) {
+        this.dynamicProperties = dynamicProperties;
     }
 }
