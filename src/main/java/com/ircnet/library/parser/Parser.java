@@ -1,4 +1,4 @@
-package com.ircnet.library.common;
+package com.ircnet.library.parser;
 
 import com.ircnet.library.common.connection.IRCConnection;
 

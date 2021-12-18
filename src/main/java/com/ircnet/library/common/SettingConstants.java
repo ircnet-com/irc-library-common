@@ -11,7 +11,7 @@ public class SettingConstants {
     public static final int RECONNECT_DELAY_DEFAULT = 20;
 
     public static final String LAGCHECK_INTERVAL = "lagcheck-interval";
-    public static final int LAGCHECK_INTERVAL_DEFAULT = 0;
+    public static final int LAGCHECK_INTERVAL_DEFAULT = 60;
 
     public static final String MAX_LAG_BEFORE_DISCONNECT = "max-lag-before-disconnect";
     public static final int MAX_LAG_BEFORE_DISCONNECT_DEFAULT = 300;
