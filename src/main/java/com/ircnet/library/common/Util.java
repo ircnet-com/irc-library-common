@@ -1,10 +1,5 @@
 package com.ircnet.library.common;
 
-import com.ircnet.library.common.configuration.ConfigurationModel;
-import com.ircnet.library.common.configuration.IRCServerModel;
-
-import java.util.Random;
-
 public class Util {
     private static final String REGEX_SPECIAL_CHARACTERS = "<([{\\^-=$!|]})+.>";
 
@@ -40,10 +35,5 @@ public class Util {
 
     public static boolean hostmaskMatches(String pattern, User user) {
         return hostmaskMatches(pattern, user.getNick() + "!" + user.getUser() + "@" + user.getHost());
-    }
-
-    public static IRCServerModel findRandomIRCServer(ConfigurationModel configurationModel) {
-        int index = new Random().nextInt(configurationModel.getIrcServers().size());
-        return configurationModel.getIrcServers().get(index);
     }
 }

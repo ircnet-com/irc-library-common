@@ -1,6 +1,7 @@
 package com.ircnet.library.common.connection;
 
 import com.ircnet.library.common.configuration.ServerModel;
+import org.springframework.stereotype.Service;
 
 import java.net.Inet4Address;
 import java.net.Inet6Address;
@@ -10,12 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Resolver {
-    public static InetAddress resolve(ServerModel serverModel) throws UnknownHostException {
+@Service
+public class ResolveService {
+    public InetAddress resolve(ServerModel serverModel) throws UnknownHostException {
         return resolve(serverModel.getHostname(), serverModel.getProtocol());
     }
 
-    private static InetAddress resolve(String hostname, ServerModel.Protocol protocol) throws UnknownHostException {
+    private InetAddress resolve(String hostname, ServerModel.Protocol protocol) throws UnknownHostException {
         InetAddress[] inetAddresses = InetAddress.getAllByName(hostname);
         List<Inet4Address> inet4Addresses = new ArrayList<>();
         List<Inet6Address> inet6Addresses = new ArrayList<>();
