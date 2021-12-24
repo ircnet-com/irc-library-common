@@ -9,6 +9,7 @@ import com.ircnet.library.common.event.ConnectionStatusChangedEvent;
 import com.ircnet.library.common.event.EventBus;
 import com.ircnet.library.common.event.ReceivedLineEvent;
 import com.ircnet.library.parser.Parser;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,13 +146,29 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
 
     @Override
     public void notice(IRCConnection connection, String target, String format, Object... args) {
-        String content = new Formatter().format(format, args).toString();
+        String content;
+
+        if(!ArrayUtils.isEmpty(args)) {
+            content = new Formatter().format(format, args).toString();
+        }
+        else {
+            content = format;
+        }
+
         send(connection, "NOTICE %s :%s", target, content);
     }
 
     @Override
     public void privmsg(IRCConnection connection, String target, String format, Object... args) {
-        String content = new Formatter().format(format, args).toString();
+        String content;
+
+        if(!ArrayUtils.isEmpty(args)) {
+            content = new Formatter().format(format, args).toString();
+        }
+        else {
+            content = format;
+        }
+
         send(connection, "PRIVMSG %s :%s", target, content);
     }
 
