@@ -5,6 +5,7 @@ import com.ircnet.library.common.connection.IRCConnectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ParserImpl<T extends IRCConnection> implements Parser<T> {
@@ -15,8 +16,8 @@ public class ParserImpl<T extends IRCConnection> implements Parser<T> {
 
     public ParserImpl() {
         parserMappingList = new ArrayList<>();
-        parserMappingList.add(new ParserMapping<>("PING", 0, 2, (arg1, arg2) -> parsePing(arg1, arg2)));
-        parserMappingList.add(new ParserMapping<>("PONG", 1, 4, (arg1, arg2) -> parsePong(arg1, arg2)));
+        parserMappingList.add(new ParserMapping<>("PING", 0, 2, (arg1, arg2, arg3) -> parsePing(arg1, arg2)));
+        parserMappingList.add(new ParserMapping<>("PONG", 1, 4, (arg1, arg2, arg3) -> parsePong(arg1, arg2)));
     }
 
     @Override
@@ -26,7 +27,7 @@ public class ParserImpl<T extends IRCConnection> implements Parser<T> {
         for(ParserMapping parserMapping : parserMappingList) {
             if(parts.length > parserMapping.getIndex() && parserMapping.getKey().equals(parts[parserMapping.getIndex()])) {
                 parts = line.split(" ", parserMapping.getArgumentCount());
-                parserMapping.getParserMethod().parse(ircConnection, parts);
+                parserMapping.getParserMethod().parse(ircConnection, parts, new HashMap<>());
                 return;
             }
         }
