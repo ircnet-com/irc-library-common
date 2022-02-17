@@ -17,9 +17,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class IRCTaskServiceImpl implements IRCTaskService {
@@ -31,7 +29,13 @@ public class IRCTaskServiceImpl implements IRCTaskService {
     @Autowired
     private SettingService settingService;
 
+    @Override
     public void run(IRCTask ircTask)  {
+        run(new ArrayList<>(Arrays.asList(ircTask)));
+    }
+
+    @Override
+    public void run(List<? extends IRCTask> ircTasks)  {
         long lastTimeMillis = System.currentTimeMillis();
 
         Selector selector;
@@ -43,26 +47,41 @@ public class IRCTaskServiceImpl implements IRCTaskService {
             return;
         }
 
-        while (!ircTask.isAborted()) {
+        while(true) {
             Instant iterationBegin = Instant.now();
+            long now = System.currentTimeMillis();
 
             try {
-                long now = System.currentTimeMillis();
-
                 if (selector.select(300) > 0) {
-                    processReadySet(ircTask, selector.selectedKeys());
+                    processReadySet(selector.selectedKeys());
                 }
-
-                if (now - lastTimeMillis >= 1000) {
-                    lastTimeMillis = System.currentTimeMillis();
-
-                    afterOneSecond(ircTask);
-                }
-
-                processClientIteration(ircTask, selector);
             }
             catch (Exception e) {
                 LOGGER.error("An error occurred", e);
+            }
+
+            Iterator<? extends IRCTask> iterator = ircTasks.iterator();
+
+            while(iterator.hasNext()) {
+                IRCTask ircTask = iterator.next();
+
+                if(ircTask.isAborted()) {
+                    LOGGER.info("Terminating task for {}", ircTask.getConfiguration().getUserId());
+                    iterator.remove();
+                    continue;
+                }
+
+                try {
+                    if (now - lastTimeMillis >= 1000) {
+                        lastTimeMillis = System.currentTimeMillis();
+                        afterOneSecond(ircTask);
+                    }
+
+                    processClientIteration(ircTask, selector);
+                }
+                catch (Exception e) {
+                    LOGGER.error("An error occurred", e);
+                }
             }
 
             Instant iterationEnd = Instant.now();
@@ -72,8 +91,6 @@ public class IRCTaskServiceImpl implements IRCTaskService {
                 LOGGER.warn("Iteration took {} seconds", secondsElapsed);
             }
         }
-
-        LOGGER.info("Terminating thread for {}", ircTask.getConfiguration().getUserId());
     }
 
     protected void processClientIteration(IRCTask ircTask, Selector selector) throws IOException {
@@ -86,8 +103,10 @@ public class IRCTaskServiceImpl implements IRCTaskService {
             if (new Date().getTime() >= ircConnection.getNexConnectAttempt().getTime()) {
                 ircConnectionService.connect(ircConnection);
 
-                if (ircConnection.getSocketChannel() != null && ircConnection.getSocketChannel().isOpen())
-                    ircConnection.getSocketChannel().register(selector, SelectionKey.OP_CONNECT);
+                if (ircConnection.getSocketChannel() != null && ircConnection.getSocketChannel().isOpen()) {
+                    SelectionKey selectionKey = ircConnection.getSocketChannel().register(selector, SelectionKey.OP_CONNECT);
+                    selectionKey.attach(ircTask);
+                }
             }
         }
 
@@ -134,21 +153,22 @@ public class IRCTaskServiceImpl implements IRCTaskService {
     protected void sendQueuedMessages(IRCConnection connection) {
     }
 
-    protected void processReadySet(IRCTask ircTask, Set readySet) {
-        IRCConnection ircConnection = ircTask.getIRCConnection();
+    protected void processReadySet(Set readySet) {
         Iterator iterator = readySet.iterator();
 
         while (iterator.hasNext()) {
             SelectionKey key = (SelectionKey) iterator.next();
-
             SocketChannel sc = (SocketChannel) key.channel();
+            IRCTask ircTask = (IRCTask) key.attachment();
+            IRCConnection ircConnection = ircTask.getIRCConnection();
+
             if (ircConnection == null) {
                 LOGGER.debug("Failed to find irc connection for socket channel {}", sc);
                 key.cancel();
                 try {
                     sc.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LOGGER.debug("Could not close socket", e);
                 }
                 iterator.remove();
                 continue;
