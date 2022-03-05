@@ -73,7 +73,6 @@ public class IRCTaskServiceImpl implements IRCTaskService {
 
                 try {
                     if (now - lastTimeMillis >= 1000) {
-                        lastTimeMillis = System.currentTimeMillis();
                         afterOneSecond(ircTask);
                     }
 
@@ -82,6 +81,10 @@ public class IRCTaskServiceImpl implements IRCTaskService {
                 catch (Exception e) {
                     LOGGER.error("An error occurred", e);
                 }
+            }
+
+            if (now - lastTimeMillis >= 1000) {
+                lastTimeMillis = System.currentTimeMillis();
             }
 
             Instant iterationEnd = Instant.now();
