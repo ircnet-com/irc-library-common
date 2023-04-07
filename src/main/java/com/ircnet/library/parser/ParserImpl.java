@@ -27,16 +27,18 @@ public class ParserImpl<T extends IRCConnection> implements Parser<T> {
     }
 
     @Override
-    public void parse(T ircConnection, String line) {
+    public boolean parse(T ircConnection, String line) {
         String[] parts = line.split(" ");
 
         for(ParserMapping parserMapping : parserMappingList) {
             if(parts.length > parserMapping.getIndex() && parserMapping.getKey().equals(parts[parserMapping.getIndex()])) {
                 parts = line.split(" ", parserMapping.getArgumentCount());
                 parserMapping.getParserMethod().parse(ircConnection, parts, new HashMap<>());
-                return;
+                return true;
             }
         }
+
+        return false;
     }
 
     protected void parsePing(T ircConnection, String[] parts) {
