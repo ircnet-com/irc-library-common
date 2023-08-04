@@ -27,11 +27,15 @@ public class IRCConnection {
 
     private Map<String, Object> dynamicProperties;
 
-    public IRCConnection(ConfigurationModel configurationModel) {
-        this.configurationModel = configurationModel;
+    public IRCConnection() {
         this.connectionStatus = ConnectionStatus.DISCONNECTED;
         this.nexConnectAttempt = new Date();
         this.dynamicProperties = new HashMap<>();
+    }
+
+    public IRCConnection(ConfigurationModel configurationModel) {
+        this();
+        this.configurationModel = configurationModel;
     }
 
     public static Logger getLOGGER() {
