@@ -59,14 +59,14 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
             inetAddress = resolveService.resolve(server);
         }
         catch (Exception e) {
-            LOGGER.error("Failed to resolve {} protocol: {}", server.getHostname(), server.getProtocol());
+            LOGGER.error("Failed to resolve {} protocol: {}", server.getAddress(), server.getProtocol());
             eventBus.publishEvent(new ConnectionStatusChangedEvent(connection, oldConnectionStatus, connection.getConnectionStatus()));
             return;
         }
 
         InetSocketAddress inetSocketAddress = new InetSocketAddress(inetAddress, server.getPort());
 
-        LOGGER.info("Connecting to {} ({}) port {}", server.getHostname(), inetSocketAddress.getAddress().getHostAddress(), server.getPort());
+        LOGGER.info("Connecting to {} ({}) port {}", server.getAddress(), inetSocketAddress.getAddress().getHostAddress(), server.getPort());
 
         connection.setSocketChannel(SocketChannel.open());
         connection.getSocketChannel().configureBlocking(false);

@@ -6,7 +6,7 @@ public abstract class ServerModel {
         IPV6
     }
 
-    protected String hostname;
+    protected String address;
     protected int port;
     protected Protocol protocol;
     protected String password;
@@ -15,18 +15,18 @@ public abstract class ServerModel {
     public ServerModel() {
     }
 
-    public ServerModel(String hostname, int port, Protocol protocol) {
-        this.hostname = hostname;
+    public ServerModel(String address, int port, Protocol protocol) {
+        this.address = address;
         this.port = port;
         this.protocol = protocol;
     }
 
-    public String getHostname() {
-        return hostname;
+    public String getAddress() {
+        return address;
     }
 
-    public void setHostname(String hostname) {
-        this.hostname = hostname;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public int getPort() {

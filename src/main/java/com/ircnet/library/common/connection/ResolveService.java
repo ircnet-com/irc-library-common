@@ -14,7 +14,7 @@ import java.util.Random;
 @Service
 public class ResolveService {
     public InetAddress resolve(ServerModel serverModel) throws UnknownHostException {
-        return resolve(serverModel.getHostname(), serverModel.getProtocol());
+        return resolve(serverModel.getAddress(), serverModel.getProtocol());
     }
 
     private InetAddress resolve(String hostname, ServerModel.Protocol protocol) throws UnknownHostException {
