@@ -49,9 +49,8 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
         ConnectionStatus oldConnectionStatus = connection.getConnectionStatus();
         ConfigurationModel configurationModel = connection.getConfigurationModel();
 
-        ServerModel server;
-
-        server = findRandomIRCServer(configurationModel);
+        IRCServerModel server = findRandomIRCServer(configurationModel);
+        connection.setCurrentServer(server);
 
         InetAddress inetAddress;
 
