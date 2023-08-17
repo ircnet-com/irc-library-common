@@ -1,6 +1,7 @@
 package com.ircnet.library.common.connection;
 
 import com.ircnet.library.common.configuration.ConfigurationModel;
+import com.ircnet.library.common.configuration.ServerModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +14,7 @@ public class IRCConnection {
     private static final Logger LOGGER = LoggerFactory.getLogger(IRCConnection.class);
 
     protected ConfigurationModel configurationModel;
+    protected ServerModel currentServer;
     protected SocketChannel socketChannel;
     protected String incompleteLine;
 
@@ -48,6 +50,14 @@ public class IRCConnection {
 
     public void setConfigurationModel(ConfigurationModel configurationModel) {
         this.configurationModel = configurationModel;
+    }
+
+    public ServerModel getCurrentServer() {
+        return currentServer;
+    }
+
+    public void setCurrentServer(ServerModel currentServer) {
+        this.currentServer = currentServer;
     }
 
     public SocketChannel getSocketChannel() {
