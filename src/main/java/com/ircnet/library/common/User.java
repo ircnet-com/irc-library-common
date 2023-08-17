@@ -32,8 +32,6 @@ public class User implements Comparable<User> {
             this.nick = hostmask;
     }
 
-
-
     public String getNick() {
         return nick;
     }

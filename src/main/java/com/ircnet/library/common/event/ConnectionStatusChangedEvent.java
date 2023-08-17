@@ -2,6 +2,7 @@ package com.ircnet.library.common.event;
 
 import com.ircnet.library.common.connection.ConnectionStatus;
 import com.ircnet.library.common.connection.IRCConnection;
+import lombok.Getter;
 
 /**
  * - Connecting
@@ -9,6 +10,7 @@ import com.ircnet.library.common.connection.IRCConnection;
  * - Registered (got 001 or 383)
  * - Disconnected
  */
+@Getter
 public class ConnectionStatusChangedEvent extends AbstractEvent {
     private ConnectionStatus oldStatus;
     private ConnectionStatus newStatus;
@@ -16,22 +18,6 @@ public class ConnectionStatusChangedEvent extends AbstractEvent {
     public ConnectionStatusChangedEvent(IRCConnection ircConnection, ConnectionStatus oldStatus, ConnectionStatus newStatus) {
         this.ircConnection = ircConnection;
         this.oldStatus = oldStatus;
-        this.newStatus = newStatus;
-    }
-
-    public ConnectionStatus getOldStatus() {
-        return oldStatus;
-    }
-
-    public void setOldStatus(ConnectionStatus oldStatus) {
-        this.oldStatus = oldStatus;
-    }
-
-    public ConnectionStatus getNewStatus() {
-        return newStatus;
-    }
-
-    public void setNewStatus(ConnectionStatus newStatus) {
         this.newStatus = newStatus;
     }
 }
