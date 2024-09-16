@@ -21,7 +21,6 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.Random;
@@ -131,10 +130,6 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
 
     @Override
     public void send(IRCConnection connection, String text) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
-        String date = simpleDateFormat.format(new Date());
-        //LOGGER.debug("[{}] {}", date, text);
-
         ByteBuffer bb = ByteBuffer.wrap((text+"\r\n").getBytes());
 
         try {
