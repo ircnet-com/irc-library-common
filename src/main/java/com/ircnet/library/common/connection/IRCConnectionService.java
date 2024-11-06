@@ -4,8 +4,13 @@ import com.ircnet.library.common.configuration.ConfigurationModel;
 import com.ircnet.library.common.configuration.IRCServerModel;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface IRCConnectionService {
+    void run(IRCConnection ircTask);
+
+    void run(List<? extends IRCConnection> ircTasks);
+
     void connect(IRCConnection connection) throws IOException;
 
     void onConnectionEstablished(IRCConnection connection);

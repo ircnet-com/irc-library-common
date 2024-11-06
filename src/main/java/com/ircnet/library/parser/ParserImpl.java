@@ -5,7 +5,6 @@ import com.ircnet.library.common.connection.IRCConnection;
 import com.ircnet.library.common.connection.IRCConnectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,16 +13,19 @@ import java.util.List;
 public class ParserImpl<T extends IRCConnection> implements Parser<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(ParserImpl.class);
 
-    @Autowired
-    private IRCConnectionService ircConnectionService;
-
-    private List<ParserMapping<T>> parserMappingList;
+    protected IRCConnectionService ircConnectionService;
+    protected List<ParserMapping<T>> parserMappingList;
 
     public ParserImpl() {
         parserMappingList = new ArrayList<>();
         parserMappingList.add(new ParserMapping<>("PING", 0, 2, (arg1, arg2, arg3) -> parsePing(arg1, arg2)));
         parserMappingList.add(new ParserMapping<>("PONG", 1, 4, (arg1, arg2, arg3) -> parsePong(arg1, arg2)));
         parserMappingList.add(new ParserMapping<>("ERROR", 0, 2, (arg1, arg2, arg3) -> parseError(arg1, arg2)));
+    }
+
+    @Override
+    public void setIRCConnectionService(IRCConnectionService ircConnectionService) {
+        this.ircConnectionService = ircConnectionService;
     }
 
     @Override
