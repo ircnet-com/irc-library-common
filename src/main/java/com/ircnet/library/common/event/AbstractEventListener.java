@@ -1,13 +1,11 @@
 package com.ircnet.library.common.event;
 
 import com.ircnet.library.common.connection.IRCConnectionService;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.EventListener;
 
 public abstract class AbstractEventListener<T extends AbstractEvent> implements EventListener {
-    @Autowired
     protected IRCConnectionService ircConnectionService;
 
     private String owner;

@@ -1,11 +1,20 @@
 package com.ircnet.library.common.connection;
 
+import com.ircnet.library.common.SettingService;
+import com.ircnet.library.common.event.EventBus;
+import com.ircnet.library.parser.Parser;
+
 import java.util.Formatter;
 
 public class SingletonIRCConnectionServiceImpl extends IRCConnectionServiceImpl implements SingletonIRCConnectionService {
     private IRCConnection ircConnection;
 
-    public SingletonIRCConnectionServiceImpl(IRCConnection ircConnection) {
+    public SingletonIRCConnectionServiceImpl(EventBus eventBus,
+                                             Parser parser,
+                                             SettingService settingService,
+                                             ResolveService resolveService,
+                                             IRCConnection ircConnection) {
+        super(eventBus, parser, settingService, resolveService);
         this.ircConnection = ircConnection;
     }
 

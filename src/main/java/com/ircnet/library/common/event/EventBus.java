@@ -2,14 +2,12 @@ package com.ircnet.library.common.event;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 
-@Component
 public class EventBus {
     private static final Logger LOGGER = LoggerFactory.getLogger(EventBus.class);
 
