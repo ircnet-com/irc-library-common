@@ -1,5 +1,10 @@
 package com.ircnet.library.common;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class User implements Comparable<User> {
     private String nick;
     private String user;
@@ -30,30 +35,6 @@ public class User implements Comparable<User> {
 
         else
             this.nick = hostmask;
-    }
-
-    public String getNick() {
-        return nick;
-    }
-
-    public void setNick(String nick) {
-        this.nick = nick;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
     }
 
     @Override

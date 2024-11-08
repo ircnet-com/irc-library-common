@@ -53,20 +53,4 @@ public class IRCConnection {
     public boolean isSSL() {
         return false;
     }
-
-    public boolean isAborted() {
-        return aborted;
-    }
-
-    public void setAborted(boolean aborted) {
-        this.aborted = aborted;
-    }
-
-    public long getLastProcessClientIteration() {
-        return lastProcessClientIteration;
-    }
-
-    public void setLastProcessClientIteration(long lastProcessClientIteration) {
-        this.lastProcessClientIteration = lastProcessClientIteration;
-    }
 }
