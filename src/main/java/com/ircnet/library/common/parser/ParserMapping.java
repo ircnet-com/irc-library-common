@@ -1,7 +1,9 @@
-package com.ircnet.library.parser;
+package com.ircnet.library.common.parser;
 
 import com.ircnet.library.common.connection.IRCConnection;
+import lombok.Getter;
 
+@Getter
 public class ParserMapping<T extends IRCConnection> {
     private String key;
     private int index;
@@ -13,21 +15,5 @@ public class ParserMapping<T extends IRCConnection> {
         this.index = index;
         this.argumentCount = argumentCount;
         this.parserMethod = parserMethod;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public int getArgumentCount() {
-        return argumentCount;
-    }
-
-    public ParserMethod getParserMethod() {
-        return parserMethod;
     }
 }

@@ -7,7 +7,7 @@ import com.ircnet.library.common.configuration.IRCServerModel;
 import com.ircnet.library.common.event.ConnectionStatusChangedEvent;
 import com.ircnet.library.common.event.EventBus;
 import com.ircnet.library.common.event.ReceivedLineEvent;
-import com.ircnet.library.parser.Parser;
+import com.ircnet.library.common.parser.Parser;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

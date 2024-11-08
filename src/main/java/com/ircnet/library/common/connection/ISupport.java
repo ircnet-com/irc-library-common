@@ -1,5 +1,7 @@
 package com.ircnet.library.common.connection;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
@@ -8,6 +10,8 @@ import java.util.Map;
 /**
  * 005
  */
+@Getter
+@Setter
 public class ISupport {
     private Map<Character, Character> channelModes;
     private int maxChannels;
@@ -161,37 +165,5 @@ public class ISupport {
         if(modesEnd > modesStart) {
             this.channelStatusFlags = value.substring(modesStart, modesEnd);
         }
-    }
-
-    public Map<Character, Character> getChannelModes() {
-        return channelModes;
-    }
-
-    public void setChannelModes(Map<Character, Character> channelModes) {
-        this.channelModes = channelModes;
-    }
-
-    public int getMaxChannels() {
-        return maxChannels;
-    }
-
-    public void setMaxChannels(int maxChannels) {
-        this.maxChannels = maxChannels;
-    }
-
-    public String getChannelStatusFlags() {
-        return channelStatusFlags;
-    }
-
-    public void setChannelStatusFlags(String channelStatusFlags) {
-        this.channelStatusFlags = channelStatusFlags;
-    }
-
-    public String getChannelTypes() {
-        return channelTypes;
-    }
-
-    public void setChannelTypes(String channelTypes) {
-        this.channelTypes = channelTypes;
     }
 }
