@@ -1,4 +1,4 @@
-package com.ircnet.library.common.parser;
+ package com.ircnet.library.common.parser;
 
 import com.ircnet.library.common.Util;
 import com.ircnet.library.common.connection.IRCConnection;
@@ -21,11 +21,6 @@ public class ParserImpl<T extends IRCConnection> implements Parser<T> {
         parserMappingList.add(new ParserMapping<>("PING", 0, 2, (arg1, arg2, arg3) -> parsePing(arg1, arg2)));
         parserMappingList.add(new ParserMapping<>("PONG", 1, 4, (arg1, arg2, arg3) -> parsePong(arg1, arg2)));
         parserMappingList.add(new ParserMapping<>("ERROR", 0, 2, (arg1, arg2, arg3) -> parseError(arg1, arg2)));
-    }
-
-    @Override
-    public void setIRCConnectionService(IRCConnectionService ircConnectionService) {
-        this.ircConnectionService = ircConnectionService;
     }
 
     @Override
