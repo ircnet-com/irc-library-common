@@ -3,14 +3,16 @@
 import com.ircnet.library.common.Util;
 import com.ircnet.library.common.connection.IRCConnection;
 import com.ircnet.library.common.connection.IRCConnectionService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class ParserImpl<T extends IRCConnection> implements Parser<T> {
+ public class ParserImpl<T extends IRCConnection> implements Parser<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(ParserImpl.class);
 
     protected IRCConnectionService ircConnectionService;
@@ -24,13 +26,24 @@ public class ParserImpl<T extends IRCConnection> implements Parser<T> {
     }
 
     @Override
-    public boolean parse(T ircConnection, String line) {
+    public boolean parse(T ircConnection, String input) {
+        String line;
+        Map<String, String> tagMap = new HashMap<>();
+
+        if(input.charAt(0) == '@') {
+            tagMap.putAll(parseMessageTags(input));
+            line = StringUtils.substringAfter(input, " ");
+        }
+        else {
+            line = input;
+        }
+
         String[] parts = line.split(" ");
 
         for(ParserMapping parserMapping : parserMappingList) {
             if(parts.length > parserMapping.getIndex() && parserMapping.getKey().equals(parts[parserMapping.getIndex()])) {
                 parts = line.split(" ", parserMapping.getArgumentCount());
-                parserMapping.getParserMethod().parse(ircConnection, parts, new HashMap<>());
+                parserMapping.getParserMethod().parse(ircConnection, parts, tagMap);
                 return true;
             }
         }
@@ -49,4 +62,24 @@ public class ParserImpl<T extends IRCConnection> implements Parser<T> {
     private void parseError(T ircConnection, String[] parts) {
         LOGGER.info("Received error: {}", Util.removeLeadingColon(parts[1]));
     }
+
+     /**
+      * Creates a map of message tags from messages like:
+      *   "@aaa=bbb;ccc;example.com/ddd=eee :nick!ident@host PRIVMSG me :Hello"
+      *
+      * @param line
+      * @return a message of tags
+      */
+     private Map<String, String> parseMessageTags(String line) {
+         Map<String, String> tagMap = new HashMap<>();
+         String[] parts = line.split(" ", 2);
+         String[] tags = parts[0].substring(1).split(";");
+
+         for (String tag : tags) {
+             String[] keyAndValue = tag.split("=");
+             tagMap.put(keyAndValue[0], keyAndValue.length > 1 ? keyAndValue[1] : null);
+         }
+
+         return tagMap;
+     }
 }
