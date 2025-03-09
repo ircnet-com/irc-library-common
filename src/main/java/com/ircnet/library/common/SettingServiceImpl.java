@@ -1,24 +1,19 @@
 package com.ircnet.library.common;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import jakarta.annotation.PostConstruct;
 
-import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 
-@Service
 public class SettingServiceImpl implements SettingService {
-    @Value("${lagcheck.interval:" + SettingConstants.LAGCHECK_INTERVAL_DEFAULT + "}")
-    private int defaultLagcheckInterval;
-
-    @Value("${lagcheck.max-lag-before-disconnect:" + SettingConstants.MAX_LAG_BEFORE_DISCONNECT_DEFAULT + "}")
-    private int defaultMaxLagBeforeDisconnect;
-
     protected Map<String, Object> settings;
+    protected int defaultLagcheckInterval;
+    protected int defaultMaxLagBeforeDisconnect;
 
-    public SettingServiceImpl() {
+    public SettingServiceImpl(int defaultLagcheckInterval, int defaultMaxLagBeforeDisconnect) {
         this.settings = new HashMap<>();
+        this.defaultLagcheckInterval = defaultLagcheckInterval;
+        this.defaultMaxLagBeforeDisconnect = defaultMaxLagBeforeDisconnect;
     }
 
     @Override
