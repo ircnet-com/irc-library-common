@@ -38,17 +38,37 @@ import java.util.Map;
             line = input;
         }
 
-        String[] parts = line.split(" ");
+        String[] parts = line.split(" ", countParams(input));
 
         for(ParserMapping parserMapping : parserMappingList) {
             if(parts.length > parserMapping.getIndex() && parserMapping.getKey().equals(parts[parserMapping.getIndex()])) {
-                parts = line.split(" ", parserMapping.getArgumentCount());
                 parserMapping.getParserMethod().parse(ircConnection, parts, tagMap);
                 return true;
             }
         }
 
         return false;
+    }
+
+    private int countParams(String input) {
+        int count = 1;
+
+        if(input.length() < 2) {
+            return count;
+        }
+
+        char[] inputArray = input.toCharArray();
+
+        for(int i = 1; i < inputArray.length; i++) {
+            if(inputArray[i] == ':') {
+                break;
+            }
+            else if(inputArray[i] == ' ') {
+                count++;
+            }
+        }
+
+        return count;
     }
 
     protected void parsePing(T ircConnection, String[] parts) {
