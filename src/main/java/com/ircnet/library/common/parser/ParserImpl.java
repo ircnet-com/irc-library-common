@@ -60,11 +60,12 @@ import java.util.Map;
         char[] inputArray = input.toCharArray();
 
         for(int i = 1; i < inputArray.length; i++) {
-            if(inputArray[i] == ':') {
-                break;
-            }
-            else if(inputArray[i] == ' ') {
+            if(inputArray[i] == ' ') {
                 count++;
+
+                if(i + 1 < inputArray.length && inputArray[i + 1] == ':') {
+                    break;
+                }
             }
         }
 
