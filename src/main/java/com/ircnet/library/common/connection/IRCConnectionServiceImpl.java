@@ -377,6 +377,7 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
 
         try {
             connection.socketChannel.write(bb);
+            LOGGER.debug("Sent: {}", text);
         } catch (IOException e) {
             e.printStackTrace();
         }
