@@ -20,6 +20,8 @@ public class IRCConnection {
     protected SocketChannel socketChannel;
     protected String incompleteLine;
 
+    protected String serverName;
+    protected String sid;
     protected ConnectionStatus connectionStatus;
     protected Date connectTime;
     protected Date nexConnectAttempt;
