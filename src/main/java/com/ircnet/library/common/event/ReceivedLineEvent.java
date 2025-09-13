@@ -1,7 +1,6 @@
 package com.ircnet.library.common.event;
 
 import com.ircnet.library.common.connection.IRCConnection;
-import lombok.Data;
 import lombok.Getter;
 
 @Getter

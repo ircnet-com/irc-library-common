@@ -14,8 +14,9 @@ public class SingletonIRCConnectionServiceImpl extends IRCConnectionServiceImpl 
                                              Parser parser,
                                              SettingService settingService,
                                              ResolveService resolveService,
-                                             IRCConnection ircConnection) {
-        super(eventBus, parser, settingService, resolveService);
+                                             IRCConnection ircConnection,
+                                             ConnectionStatusChangedHandler connectionStatusChangedHandler) {
+        super(eventBus, parser, settingService, resolveService, connectionStatusChangedHandler);
         this.ircConnection = ircConnection;
     }
 

@@ -24,7 +24,7 @@ public class IRCConnection {
     protected String sid;
     protected ConnectionStatus connectionStatus;
     protected Date connectTime;
-    protected Date nexConnectAttempt;
+    protected Date nextConnectAttempt;
 
     private boolean lagCheckInProgress;
     private int lag;
@@ -39,7 +39,7 @@ public class IRCConnection {
 
     public IRCConnection() {
         this.connectionStatus = ConnectionStatus.DISCONNECTED;
-        this.nexConnectAttempt = new Date();
+        this.nextConnectAttempt = new Date();
         this.dynamicProperties = new HashMap<>();
     }
 

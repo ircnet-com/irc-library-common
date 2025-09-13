@@ -28,19 +28,20 @@ import java.util.*;
 public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
     private static final Logger LOGGER = LoggerFactory.getLogger(IRCConnectionServiceImpl.class);
 
-    protected EventBus eventBus;
-    protected Parser parser;
-    protected SettingService settingService;
-    protected ResolveService resolveService;
+    protected final EventBus eventBus;
+    protected final Parser parser;
+    protected final SettingService settingService;
+    protected final ResolveService resolveService;
+    protected final ConnectionStatusChangedHandler connectionStatusChangedHandler;
 
-    public IRCConnectionServiceImpl(EventBus eventBus,
-                                    Parser parser,
-                                    SettingService settingService,
-                                    ResolveService resolveService) {
+    public IRCConnectionServiceImpl(EventBus eventBus, Parser parser,
+                                    SettingService settingService, ResolveService resolveService,
+                                    ConnectionStatusChangedHandler connectionStatusChangedHandler) {
         this.eventBus = eventBus;
         this.parser = parser;
         this.settingService = settingService;
         this.resolveService = resolveService;
+        this.connectionStatusChangedHandler = connectionStatusChangedHandler;
     }
 
     @Override
@@ -116,7 +117,7 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
 
         // Connect
         if (!ircConnection.isAborted() && ircConnection.getConfiguration().isAutoConnectEnabled() && ircConnection.getConnectionStatus() == ConnectionStatus.DISCONNECTED) {
-            if (new Date().getTime() >= ircConnection.getNexConnectAttempt().getTime()) {
+            if (new Date().getTime() >= ircConnection.getNextConnectAttempt().getTime()) {
                 connect(ircConnection);
 
                 if (ircConnection.getSocketChannel() != null && ircConnection.getSocketChannel().isOpen()) {
@@ -207,7 +208,7 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
                         try {
                             sc.close();
                         } catch (IOException e1) {
-                            e1.printStackTrace();
+                            LOGGER.debug("Failed to close socket", e1);
                         }
                         onDisconnect(ircConnection, e.getMessage());
                         continue;
@@ -300,12 +301,12 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
         }
         catch (Exception e) {
             LOGGER.error("Failed to resolve {} protocol: {}", server.getAddress(), server.getProtocol());
+            connectionStatusChangedHandler.onDisconnect(connection, oldConnectionStatus);
             eventBus.publishEvent(new ConnectionStatusChangedEvent(connection, oldConnectionStatus, connection.getConnectionStatus()));
             return;
         }
 
         InetSocketAddress inetSocketAddress = new InetSocketAddress(inetAddress, server.getPort());
-
         LOGGER.info("Connecting to {} ({}) port {}", server.getAddress(), inetSocketAddress.getAddress().getHostAddress(), server.getPort());
 
         connection.setSocketChannel(SocketChannel.open());
@@ -315,10 +316,10 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
             connection.getSocketChannel().bind(new InetSocketAddress(configurationModel.getLocalAddress(), 0));
         }
 
-        connection.setConnectionStatus(ConnectionStatus.CONNECTING);
         connection.setConnectTime(new Date());
         connection.getSocketChannel().connect(inetSocketAddress);
-
+        connection.setConnectionStatus(ConnectionStatus.CONNECTING);
+        connectionStatusChangedHandler.onDisconnect(connection, oldConnectionStatus);
         eventBus.publishEvent(new ConnectionStatusChangedEvent(connection, oldConnectionStatus, connection.getConnectionStatus()));
     }
 
@@ -329,6 +330,7 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
 
         if(!connection.isSSL()) {
             // Connection to IRC established
+            connectionStatusChangedHandler.onConnectionEstablished(connection);
             eventBus.publishEvent(new ConnectionStatusChangedEvent(connection, oldConnectionStatus, connection.getConnectionStatus()));
         }
     }
@@ -339,6 +341,7 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
         connection.setConnectionStatus(ConnectionStatus.DISCONNECTED);
         connection.setConnectTime(null);
 
+        connectionStatusChangedHandler.onDisconnect(connection, oldConnectionStatus);
         eventBus.publishEvent(new ConnectionStatusChangedEvent(connection, oldConnectionStatus, connection.getConnectionStatus()));
 
         // TODO: Handle parse ERROR, maybe QUIT
@@ -349,7 +352,7 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
         try {
             connection.getSocketChannel().close();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.debug("Failed to close socket", e);
         }
 
         onDisconnect(connection, "");
@@ -379,7 +382,7 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
             connection.socketChannel.write(bb);
             LOGGER.debug("Sent: {}", text);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.debug("Failed to close socket", e);
         }
     }
 
