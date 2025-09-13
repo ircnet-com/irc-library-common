@@ -6,7 +6,7 @@
 
     <groupId>com.ircnet.library</groupId>
     <artifactId>irc-library-common</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.2-SNAPSHOT</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -18,7 +18,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>6.1.21</version>
+            <version>6.2.11</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -44,7 +44,7 @@
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <version>1.18.38</version>
+                <version>1.18.40</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
