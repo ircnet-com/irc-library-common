@@ -20,9 +20,9 @@ import java.util.Map;
 
     public ParserImpl() {
         parserMappingList = new ArrayList<>();
-        parserMappingList.add(new ParserMapping<>("PING", 0, 2, (arg1, arg2, arg3) -> parsePing(arg1, arg2)));
-        parserMappingList.add(new ParserMapping<>("PONG", 1, 4, (arg1, arg2, arg3) -> parsePong(arg1, arg2)));
-        parserMappingList.add(new ParserMapping<>("ERROR", 0, 2, (arg1, arg2, arg3) -> parseError(arg1, arg2)));
+        parserMappingList.add(new ParserMapping<>("PING", 0, (arg1, arg2, arg3) -> parsePing(arg1, arg2)));
+        parserMappingList.add(new ParserMapping<>("PONG", 1, (arg1, arg2, arg3) -> parsePong(arg1, arg2)));
+        parserMappingList.add(new ParserMapping<>("ERROR", 0, (arg1, arg2, arg3) -> parseError(arg1, arg2)));
     }
 
     @Override

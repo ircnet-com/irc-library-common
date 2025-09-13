@@ -2,6 +2,10 @@ package com.ircnet.library.common.connection;
 
 public class ConnectionStatusChangedHandlerImpl implements ConnectionStatusChangedHandler {
     @Override
+    public void onConnecting(IRCConnection ircConnection) {
+    }
+
+    @Override
     public void onConnectionEstablished(IRCConnection ircConnection) {
     }
 

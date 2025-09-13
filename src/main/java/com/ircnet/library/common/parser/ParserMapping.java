@@ -7,11 +7,9 @@ import lombok.Getter;
 public class ParserMapping<T extends IRCConnection> {
     private String key;
     private int index;
-    @Deprecated
-    private int argumentCount;
     private ParserMethod<T> parserMethod;
 
-    public ParserMapping(String key, int index, int argumentCount, ParserMethod<T> parserMethod) {
+    public ParserMapping(String key, int index, ParserMethod<T> parserMethod) {
         this.key = key;
         this.index = index;
         this.parserMethod = parserMethod;
