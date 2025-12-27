@@ -4,9 +4,7 @@ import com.ircnet.library.common.SettingConstants;
 import com.ircnet.library.common.SettingService;
 import com.ircnet.library.common.configuration.ConfigurationModel;
 import com.ircnet.library.common.configuration.IRCServerModel;
-import com.ircnet.library.common.event.ConnectionStatusChangedEvent;
-import com.ircnet.library.common.event.EventBus;
-import com.ircnet.library.common.event.ReceivedLineEvent;
+import com.ircnet.library.common.event.*;
 import com.ircnet.library.common.parser.Parser;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -290,10 +288,9 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
     public void connect(IRCConnection connection) throws IOException {
         ConnectionStatus oldConnectionStatus = connection.getConnectionStatus();
         ConfigurationModel configurationModel = connection.getConfigurationModel();
-
         IRCServerModel server = findRandomIRCServer(configurationModel);
         connection.setCurrentServer(server);
-
+        EventContext<IRCConnection> eventContext = new EventContext<>(connection, null);
         InetAddress inetAddress;
 
         try {
@@ -302,7 +299,7 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
         catch (Exception e) {
             LOGGER.error("Failed to resolve {} protocol: {}", server.getAddress(), server.getProtocol());
             connectionStatusChangedHandler.onDisconnect(connection, oldConnectionStatus);
-            eventBus.publishEvent(new ConnectionStatusChangedEvent(connection, oldConnectionStatus, connection.getConnectionStatus()));
+            eventBus.publishEvent(new ConnectionStatusChangedEvent(eventContext, oldConnectionStatus, connection.getConnectionStatus()));
             return;
         }
 
@@ -320,7 +317,7 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
         connection.getSocketChannel().connect(inetSocketAddress);
         connection.setConnectionStatus(ConnectionStatus.CONNECTING);
         connectionStatusChangedHandler.onDisconnect(connection, oldConnectionStatus);
-        eventBus.publishEvent(new ConnectionStatusChangedEvent(connection, oldConnectionStatus, connection.getConnectionStatus()));
+        eventBus.publishEvent(new ConnectionStatusChangedEvent(eventContext, oldConnectionStatus, connection.getConnectionStatus()));
     }
 
     @Override
@@ -330,8 +327,9 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
 
         if(!connection.isSSL()) {
             // Connection to IRC established
+            EventContext<IRCConnection> eventContext = new EventContext<>(connection, null);
             connectionStatusChangedHandler.onConnectionEstablished(connection);
-            eventBus.publishEvent(new ConnectionStatusChangedEvent(connection, oldConnectionStatus, connection.getConnectionStatus()));
+            eventBus.publishEvent(new ConnectionStatusChangedEvent(eventContext, oldConnectionStatus, connection.getConnectionStatus()));
         }
     }
 
@@ -342,7 +340,8 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
         connection.setConnectTime(null);
 
         connectionStatusChangedHandler.onDisconnect(connection, oldConnectionStatus);
-        eventBus.publishEvent(new ConnectionStatusChangedEvent(connection, oldConnectionStatus, connection.getConnectionStatus()));
+        EventContext<IRCConnection> eventContext = new EventContext<>(connection, null);
+        eventBus.publishEvent(new ConnectionStatusChangedEvent(eventContext, oldConnectionStatus, connection.getConnectionStatus()));
 
         // TODO: Handle parse ERROR, maybe QUIT
     }
@@ -366,8 +365,12 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
     @Override
     public void onLineReceived(IRCConnection connection, String line) {
         try {
-            parser.parse(connection, line);
-            eventBus.publishEvent(new ReceivedLineEvent(connection, line));
+            long seq = connection.nextInboundLineSeq();
+            EventContext eventContext = new EventContext(connection, seq);
+            parser.parse(connection, line, eventContext);
+
+            ReceivedLineEvent receivedLineEvent = new ReceivedLineEvent(eventContext, line);
+            eventBus.publishEvent(receivedLineEvent);
         }
         catch (Exception e) {
             LOGGER.error("Failed to parse '{}'", line, e);

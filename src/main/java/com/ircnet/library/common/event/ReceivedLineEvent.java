@@ -7,8 +7,8 @@ import lombok.Getter;
 public class ReceivedLineEvent extends AbstractEvent {
     private String line;
 
-    public ReceivedLineEvent(IRCConnection ircConnection, String line) {
-        this.ircConnection = ircConnection;
+    public ReceivedLineEvent(EventContext context, String line) {
+        super(context);
         this.line = line;
     }
 }

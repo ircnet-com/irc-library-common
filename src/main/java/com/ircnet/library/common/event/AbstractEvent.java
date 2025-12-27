@@ -2,24 +2,24 @@ package com.ircnet.library.common.event;
 
 import com.ircnet.library.common.connection.IRCConnection;
 
-import java.util.EventObject;
+import java.util.Objects;
 
-public abstract class AbstractEvent<T extends IRCConnection> extends EventObject {
-    protected T ircConnection;
+public abstract class AbstractEvent<T extends IRCConnection> {
+    private final EventContext<T> context;
 
-    public AbstractEvent() {
-        this(new Object());
+    protected AbstractEvent(EventContext<T> context) {
+        this.context = Objects.requireNonNull(context);
     }
 
-    public AbstractEvent(Object source) {
-        super(source);
+    public EventContext<T> getContext() {
+        return context;
     }
 
     public T getIRCConnection() {
-        return ircConnection;
+        return context.getIrcConnection();
     }
 
-    public void setIRCConnection(T ircConnection) {
-        this.ircConnection = ircConnection;
+    public long getLineSeq() {
+        return context.getLineSeq();
     }
 }

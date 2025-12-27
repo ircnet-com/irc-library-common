@@ -1,17 +1,16 @@
 package com.ircnet.library.common;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
-@Getter
-@Setter
+@Data
+@SuperBuilder
+@NoArgsConstructor
 public class User implements Comparable<User> {
     private String nick;
     private String user;
     private String host;
-
-    public User() {
-    }
 
     public User(String from) {
         String hostmask = Util.removeLeadingColon(from);
@@ -24,26 +23,28 @@ public class User implements Comparable<User> {
             this.user = hostmask.substring(index1 + 1, index2);
             this.host = hostmask.substring(index2 + 1);
         }
-
-        else if(hostmask.contains("@") && hostmask.contains("[") && hostmask.endsWith("]")) { // TODO: regex :)
+        else if(hostmask.contains("@") && hostmask.contains("[") && hostmask.endsWith("]")) {
             int openingSquareBracketIndex = from.indexOf("[");
             int atSignIndex = from.indexOf("@");
             this.nick = Util.removeLeadingColon(from.substring(0, openingSquareBracketIndex));
             this.user = from.substring(openingSquareBracketIndex + 1, atSignIndex);
             this.host = from.substring(atSignIndex+1, from.indexOf("]"));
         }
-
-        else
+        else {
             this.nick = hostmask;
+        }
     }
 
     @Override
     public int compareTo(User o) {
-        return this.getNick().compareToIgnoreCase(o.getNick());
+        if (this.nick == null || o.getNick() == null) {
+            return 0;
+        }
+        return this.nick.compareToIgnoreCase(o.getNick());
     }
 
     @Override
     public String toString() {
-        return getNick() + "!" + getUser() + "@" + getHost();
+        return (nick != null ? nick : "") + "!" + (user != null ? user : "") + "@" + (host != null ? host : "");
     }
 }

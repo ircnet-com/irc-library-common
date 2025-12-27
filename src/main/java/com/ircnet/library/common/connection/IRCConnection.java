@@ -37,6 +37,8 @@ public class IRCConnection {
 
     private long lastProcessClientIteration;
 
+    private long inboundLineSeq;
+
     public IRCConnection() {
         this.connectionStatus = ConnectionStatus.DISCONNECTED;
         this.nextConnectAttempt = new Date();
@@ -54,5 +56,9 @@ public class IRCConnection {
 
     public boolean isSSL() {
         return false;
+    }
+
+    public long nextInboundLineSeq() {
+        return ++inboundLineSeq;
     }
 }

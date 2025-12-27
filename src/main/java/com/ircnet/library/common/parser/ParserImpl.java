@@ -3,6 +3,7 @@
 import com.ircnet.library.common.Util;
 import com.ircnet.library.common.connection.IRCConnection;
 import com.ircnet.library.common.connection.IRCConnectionService;
+import com.ircnet.library.common.event.EventContext;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,13 +21,13 @@ import java.util.Map;
 
     public ParserImpl() {
         parserMappingList = new ArrayList<>();
-        parserMappingList.add(new ParserMapping<>("PING", 0, (arg1, arg2, arg3) -> parsePing(arg1, arg2)));
-        parserMappingList.add(new ParserMapping<>("PONG", 1, (arg1, arg2, arg3) -> parsePong(arg1, arg2)));
-        parserMappingList.add(new ParserMapping<>("ERROR", 0, (arg1, arg2, arg3) -> parseError(arg1, arg2)));
+        parserMappingList.add(new ParserMapping<>("PING", 0, (arg1, arg2, arg3, arg4) -> parsePing(arg1, arg2)));
+        parserMappingList.add(new ParserMapping<>("PONG", 1, (arg1, arg2, arg3, arg4) -> parsePong(arg1, arg2)));
+        parserMappingList.add(new ParserMapping<>("ERROR", 0, (arg1, arg2, arg3, arg4) -> parseError(arg1, arg2)));
     }
 
     @Override
-    public boolean parse(T ircConnection, String input) {
+    public boolean parse(T ircConnection, String input, EventContext<T> eventContext) {
         String line;
         Map<String, String> tagMap = new HashMap<>();
 
@@ -40,9 +41,9 @@ import java.util.Map;
 
         String[] parts = line.split(" ", countParams(input));
 
-        for(ParserMapping parserMapping : parserMappingList) {
+        for(ParserMapping<T> parserMapping : parserMappingList) {
             if(parts.length > parserMapping.getIndex() && parserMapping.getKey().equals(parts[parserMapping.getIndex()])) {
-                parserMapping.getParserMethod().parse(ircConnection, parts, tagMap);
+                parserMapping.getParserMethod().parse(ircConnection, parts, tagMap, eventContext);
                 return true;
             }
         }

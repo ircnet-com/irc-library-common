@@ -65,13 +65,13 @@ public class EventBus {
                 return;
             }
 
-            if(eventListener.getEventClass() == event.getClass() || (checkInheritance && eventListener.getEventClass().isInstance(event.getClass()))) {
+            if (eventListener.getEventClass() == event.getClass() || (checkInheritance && eventListener.getEventClass().isInstance(event))) {
                 try {
                     eventListener.onEvent(event);
                 }
-                catch(ClassCastException e) {
+                catch (ClassCastException e) {
                 }
-                catch(Exception e) {
+                catch (Exception e) {
                     LOGGER.error("An error occurred", e);
                 }
             }

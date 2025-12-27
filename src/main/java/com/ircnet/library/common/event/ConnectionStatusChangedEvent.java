@@ -15,8 +15,8 @@ public class ConnectionStatusChangedEvent extends AbstractEvent {
     private ConnectionStatus oldStatus;
     private ConnectionStatus newStatus;
 
-    public ConnectionStatusChangedEvent(IRCConnection ircConnection, ConnectionStatus oldStatus, ConnectionStatus newStatus) {
-        this.ircConnection = ircConnection;
+    public ConnectionStatusChangedEvent(EventContext context, ConnectionStatus oldStatus, ConnectionStatus newStatus) {
+        super(context);
         this.oldStatus = oldStatus;
         this.newStatus = newStatus;
     }
