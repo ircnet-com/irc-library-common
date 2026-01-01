@@ -14,6 +14,10 @@ public class ConnectionStatusChangedHandlerImpl implements ConnectionStatusChang
     }
 
     @Override
+    public void onConnectFailed(IRCConnection ircConnection) {
+    }
+
+    @Override
     public void onDisconnect(IRCConnection ircConnection, ConnectionStatus oldStatus) {
     }
 }

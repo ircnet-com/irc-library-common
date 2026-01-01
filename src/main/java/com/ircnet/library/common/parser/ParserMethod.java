@@ -7,5 +7,5 @@ import java.util.Map;
 
 @FunctionalInterface
 public interface ParserMethod<T extends IRCConnection> {
-    void parse(T ircConnection, String[] parts, Map<String, String> messageTags, EventContext<T> lineSeq);
+    void parse(T ircConnection, String[] parts, Map<String, String> messageTags, EventContext<T> lineSeq, String line);
 }

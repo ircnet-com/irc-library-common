@@ -1,19 +1,20 @@
 package com.ircnet.library.common.event;
 
 import com.ircnet.library.common.connection.IRCConnection;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
-import java.util.Objects;
-
+@Getter
+@SuperBuilder(toBuilder = true)
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractEvent<T extends IRCConnection> {
-    private final EventContext<T> context;
+    @NonNull
+    protected final EventContext<T> context;
 
-    protected AbstractEvent(EventContext<T> context) {
-        this.context = Objects.requireNonNull(context);
-    }
-
-    public EventContext<T> getContext() {
-        return context;
-    }
+    protected String raw;
 
     public T getIRCConnection() {
         return context.getIrcConnection();

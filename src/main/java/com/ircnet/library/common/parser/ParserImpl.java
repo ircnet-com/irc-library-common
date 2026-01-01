@@ -21,9 +21,9 @@ import java.util.Map;
 
     public ParserImpl() {
         parserMappingList = new ArrayList<>();
-        parserMappingList.add(new ParserMapping<>("PING", 0, (arg1, arg2, arg3, arg4) -> parsePing(arg1, arg2)));
-        parserMappingList.add(new ParserMapping<>("PONG", 1, (arg1, arg2, arg3, arg4) -> parsePong(arg1, arg2)));
-        parserMappingList.add(new ParserMapping<>("ERROR", 0, (arg1, arg2, arg3, arg4) -> parseError(arg1, arg2)));
+        parserMappingList.add(new ParserMapping<>("PING", 0, (arg1, arg2, arg3, arg4, arg5) -> parsePing(arg1, arg2)));
+        parserMappingList.add(new ParserMapping<>("PONG", 1, (arg1, arg2, arg3, arg4, arg5) -> parsePong(arg1, arg2)));
+        parserMappingList.add(new ParserMapping<>("ERROR", 0, (arg1, arg2, arg3, arg4, arg5) -> parseError(arg1, arg2)));
     }
 
     @Override
@@ -43,7 +43,7 @@ import java.util.Map;
 
         for(ParserMapping<T> parserMapping : parserMappingList) {
             if(parts.length > parserMapping.getIndex() && parserMapping.getKey().equals(parts[parserMapping.getIndex()])) {
-                parserMapping.getParserMethod().parse(ircConnection, parts, tagMap, eventContext);
+                parserMapping.getParserMethod().parse(ircConnection, parts, tagMap, eventContext, line);
                 return true;
             }
         }

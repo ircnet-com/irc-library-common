@@ -339,7 +339,13 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
         connection.setConnectionStatus(ConnectionStatus.DISCONNECTED);
         connection.setConnectTime(null);
 
-        connectionStatusChangedHandler.onDisconnect(connection, oldConnectionStatus);
+        if(oldConnectionStatus == ConnectionStatus.CONNECTING) {
+            connectionStatusChangedHandler.onConnectFailed(connection);
+        }
+        else {
+            connectionStatusChangedHandler.onDisconnect(connection, oldConnectionStatus);
+        }
+
         EventContext<IRCConnection> eventContext = new EventContext<>(connection, null);
         eventBus.publishEvent(new ConnectionStatusChangedEvent(eventContext, oldConnectionStatus, connection.getConnectionStatus()));
 
