@@ -372,11 +372,12 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
     public void onLineReceived(IRCConnection connection, String line) {
         try {
             long seq = connection.nextInboundLineSeq();
-            EventContext eventContext = new EventContext(connection, seq);
+            EventContext<IRCConnection> eventContext = new EventContext<>(connection, seq);
             parser.parse(connection, line, eventContext);
 
-            ReceivedLineEvent receivedLineEvent = new ReceivedLineEvent(eventContext, line);
-            eventBus.publishEvent(receivedLineEvent);
+            eventBus.publishEvent(ReceivedLineEvent.builder()
+                    .raw(line)
+                    .build());
         }
         catch (Exception e) {
             LOGGER.error("Failed to parse '{}'", line, e);
