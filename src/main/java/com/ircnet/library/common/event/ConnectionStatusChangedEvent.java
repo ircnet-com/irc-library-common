@@ -3,6 +3,7 @@ package com.ircnet.library.common.event;
 import com.ircnet.library.common.connection.ConnectionStatus;
 import com.ircnet.library.common.connection.IRCConnection;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
 /**
  * - Connecting
@@ -11,13 +12,8 @@ import lombok.Getter;
  * - Disconnected
  */
 @Getter
-public class ConnectionStatusChangedEvent extends AbstractEvent {
+@SuperBuilder(toBuilder = true)
+public class ConnectionStatusChangedEvent<T extends IRCConnection> extends AbstractEvent<T> {
     private ConnectionStatus oldStatus;
     private ConnectionStatus newStatus;
-
-    public ConnectionStatusChangedEvent(EventContext context, ConnectionStatus oldStatus, ConnectionStatus newStatus) {
-        super(context);
-        this.oldStatus = oldStatus;
-        this.newStatus = newStatus;
-    }
 }

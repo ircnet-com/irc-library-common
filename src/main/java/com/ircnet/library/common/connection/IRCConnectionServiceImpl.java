@@ -299,7 +299,11 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
         catch (Exception e) {
             LOGGER.error("Failed to resolve {} protocol: {}", server.getAddress(), server.getProtocol());
             connectionStatusChangedHandler.onDisconnect(connection, oldConnectionStatus);
-            eventBus.publishEvent(new ConnectionStatusChangedEvent(eventContext, oldConnectionStatus, connection.getConnectionStatus()));
+            eventBus.publishEvent(ConnectionStatusChangedEvent.builder()
+                    .context(eventContext)
+                    .oldStatus(oldConnectionStatus)
+                    .newStatus(connection.getConnectionStatus())
+                    .build());
             return;
         }
 
@@ -317,7 +321,11 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
         connection.getSocketChannel().connect(inetSocketAddress);
         connection.setConnectionStatus(ConnectionStatus.CONNECTING);
         connectionStatusChangedHandler.onDisconnect(connection, oldConnectionStatus);
-        eventBus.publishEvent(new ConnectionStatusChangedEvent(eventContext, oldConnectionStatus, connection.getConnectionStatus()));
+        eventBus.publishEvent(ConnectionStatusChangedEvent.builder()
+                .context(eventContext)
+                .oldStatus(oldConnectionStatus)
+                .newStatus(connection.getConnectionStatus())
+                .build());
     }
 
     @Override
@@ -329,7 +337,11 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
             // Connection to IRC established
             EventContext<IRCConnection> eventContext = new EventContext<>(connection, null);
             connectionStatusChangedHandler.onConnectionEstablished(connection);
-            eventBus.publishEvent(new ConnectionStatusChangedEvent(eventContext, oldConnectionStatus, connection.getConnectionStatus()));
+            eventBus.publishEvent(ConnectionStatusChangedEvent.builder()
+                    .context(eventContext)
+                    .oldStatus(oldConnectionStatus)
+                    .newStatus(connection.getConnectionStatus())
+                    .build());
         }
     }
 
@@ -347,7 +359,11 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
         }
 
         EventContext<IRCConnection> eventContext = new EventContext<>(connection, null);
-        eventBus.publishEvent(new ConnectionStatusChangedEvent(eventContext, oldConnectionStatus, connection.getConnectionStatus()));
+        eventBus.publishEvent(ConnectionStatusChangedEvent.builder()
+                .context(eventContext)
+                .oldStatus(oldConnectionStatus)
+                .newStatus(connection.getConnectionStatus())
+                .build());
 
         // TODO: Handle parse ERROR, maybe QUIT
     }
