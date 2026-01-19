@@ -392,6 +392,7 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
             parser.parse(connection, line, eventContext);
 
             eventBus.publishEvent(ReceivedLineEvent.builder()
+                    .context(eventContext)
                     .raw(line)
                     .build());
         }
