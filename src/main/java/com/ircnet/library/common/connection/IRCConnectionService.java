@@ -7,9 +7,9 @@ import java.io.IOException;
 import java.util.List;
 
 public interface IRCConnectionService {
-    void run(IRCConnection ircTask);
+    void run(IRCConnection ircConnection);
 
-    void run(List<? extends IRCConnection> ircTasks);
+    void run(List<? extends IRCConnection> ircConnections);
 
     void connect(IRCConnection connection) throws IOException;
 
