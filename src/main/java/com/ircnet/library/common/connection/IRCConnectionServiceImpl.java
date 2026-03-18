@@ -43,12 +43,12 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
     }
 
     @Override
-    public void run(IRCConnection ircTask)  {
-        run(new ArrayList<>(Arrays.asList(ircTask)));
+    public void run(IRCConnection ircConnection)  {
+        run(new ArrayList<>(Collections.singletonList(ircConnection)));
     }
 
     @Override
-    public void run(List<? extends IRCConnection> ircTasks)  {
+    public void run(List<? extends IRCConnection> ircConnections)  {
         long lastTimeMillis = System.currentTimeMillis();
 
         Selector selector;
@@ -73,13 +73,13 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
                 LOGGER.error("An error occurred", e);
             }
 
-            Iterator<? extends IRCConnection> iterator = ircTasks.iterator();
+            Iterator<? extends IRCConnection> iterator = ircConnections.iterator();
 
             while(iterator.hasNext()) {
                 IRCConnection ircConnection = iterator.next();
 
                 if(ircConnection.isAborted()) {
-                    LOGGER.info("Terminating task for {}", ircConnection.getConfiguration().getUserId());
+                    LOGGER.info("Terminating connection for {}", ircConnection.getConfiguration().getUserId());
                     iterator.remove();
                     continue;
                 }
@@ -162,7 +162,7 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
         }
     }
 
-    protected void afterOneSecond(IRCConnection ircTask) {
+    protected void afterOneSecond(IRCConnection ircConnection) {
     }
 
     protected void sendQueuedMessages(IRCConnection connection) {
@@ -252,8 +252,6 @@ public abstract class IRCConnectionServiceImpl implements IRCConnectionService {
     }
 
     protected void processInput(IRCConnection ircConnection, ByteBuffer bb) {
-        //IRCConnection ircConnection = ircTask.getIRCConnection();
-
         String input = new String(bb.array());
         input = input.replace("\u0000", "");
 
