@@ -17,6 +17,7 @@ public class ISupport {
     private int maxChannels;
     private String channelStatusFlags;
     private String channelTypes;
+    private int channelLength;
 
     public ISupport() {
         this.channelModes = new HashMap<>();
@@ -101,11 +102,12 @@ public class ISupport {
      * @return true if the string is a channel according to CHANTYPES
      */
     public boolean isChannel(String name) {
-        if(StringUtils.isEmpty(this.channelTypes) || StringUtils.isEmpty(name)) {
+        if (StringUtils.isEmpty(name)) {
             return false;
         }
 
-        return channelTypes.indexOf(name.charAt(0)) != -1;
+        char firstChar = name.charAt(0);
+        return StringUtils.contains(this.channelTypes, firstChar);
     }
 
     /**
@@ -123,8 +125,9 @@ public class ISupport {
                 return;
             }
 
-            for(int j = 0; j < modes[i].length(); j++)
+            for(int j = 0; j < modes[i].length(); j++) {
                 getChannelModes().put(modes[i].charAt(j), types[i]);
+            }
         }
     }
 
@@ -159,11 +162,10 @@ public class ISupport {
      * @param value Value of PREFIX, e.g. "(ov)@+"
      */
     public void parsePrefix(String value) {
-        int modesStart = value.indexOf('(') + 1;
-        int modesEnd = value.indexOf(')');
+        String modes = StringUtils.substringBetween(value, "(", ")");
 
-        if(modesEnd > modesStart) {
-            this.channelStatusFlags = value.substring(modesStart, modesEnd);
+        if (modes != null) {
+            this.channelStatusFlags = modes;
         }
     }
 }

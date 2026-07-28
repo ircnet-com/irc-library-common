@@ -19,29 +19,28 @@ public class IRCConnection {
     protected ServerModel currentServer;
     protected SocketChannel socketChannel;
     protected String incompleteLine;
-
-    protected String serverName;
-    protected String sid;
     protected ConnectionStatus connectionStatus;
     protected Date connectTime;
     protected Date nextConnectAttempt;
+    protected String serverName;
+    protected String sid;
+    protected String version;
+    protected boolean version212;
+    protected ISupport iSupport;
 
     private boolean lagCheckInProgress;
     private int lag;
     private Date lagCheckSent;
     private Date lagCheckNext;
-
-    private Map<String, Object> dynamicProperties;
-
-    private boolean aborted;
-
     private long lastProcessClientIteration;
-
     private long inboundLineSeq;
+    private boolean aborted;
+    private Map<String, Object> dynamicProperties;
 
     public IRCConnection() {
         this.connectionStatus = ConnectionStatus.DISCONNECTED;
         this.nextConnectAttempt = new Date();
+        this.iSupport = new ISupport();
         this.dynamicProperties = new HashMap<>();
     }
 

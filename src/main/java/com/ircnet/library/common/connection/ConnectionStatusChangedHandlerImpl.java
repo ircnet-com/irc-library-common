@@ -11,6 +11,7 @@ public class ConnectionStatusChangedHandlerImpl implements ConnectionStatusChang
 
     @Override
     public void onRegistered(IRCConnection ircConnection) {
+        ircConnection.setISupport(new ISupport());
     }
 
     @Override
